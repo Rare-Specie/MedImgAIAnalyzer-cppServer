@@ -2,3 +2,21 @@ main.dSYM/Contents
 .DS_Store
 /*.dSYM
 temp.txt
+
+# C++ compiled files
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.out
+
+# Executables
+main
+
+# VS Code
+.vscode/
+
+# Build directories
+build/
+bin/
