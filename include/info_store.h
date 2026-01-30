@@ -187,6 +187,13 @@ struct InfoStore {
         p.note = note;
         {
             std::lock_guard<std::mutex> lk(mtx);
+            fs::path project_dir = base_path / p.uuid;
+            std::error_code ec;
+            fs::create_directories(project_dir, ec);
+            if (ec) {
+                throw std::runtime_error(std::string("创建项目目录失败: ") + ec.message());
+            }
+            write_project_json(project_dir / "project.json", p.uuid);
             index[p.uuid] = p;
             persist_locked();
         }
@@ -211,10 +218,61 @@ struct InfoStore {
         if (it == index.end()) return false;
         index.erase(it);
         persist_locked();
+        fs::path project_dir = base_path / uuid;
+        std::error_code ec;
+        fs::remove_all(project_dir, ec);
+        if (ec) {
+            throw std::runtime_error(std::string("删除项目目录失败: ") + ec.message());
+        }
         return true;
     }
 
 private:
+    static std::string escape_json_string(const std::string &s)
+    {
+        std::string out;
+        out.reserve(s.size() + 8);
+        for (char c : s) {
+            switch (c) {
+                case '"': out += "\\\""; break;
+                case '\\': out += "\\\\"; break;
+                case '\b': out += "\\b"; break;
+                case '\f': out += "\\f"; break;
+                case '\n': out += "\\n"; break;
+                case '\r': out += "\\r"; break;
+                case '\t': out += "\\t"; break;
+                default: out += c; break;
+            }
+        }
+        return out;
+    }
+
+    void write_project_json(const fs::path &path, const std::string &uuid)
+    {
+        std::string s;
+        s += "{\n";
+        s += "  \"uuid\": \"" + escape_json_string(uuid) + "\",\n";
+        s += "  \"raw\": false,\n";
+        s += "  \"nii\": false,\n";
+        s += "  \"dcm\": false,\n";
+        s += "  \"semi\": false,\n";
+        s += "  \"semi-xL\": -1,\n";
+        s += "  \"semi-xR\": -1,\n";
+        s += "  \"semi-yL\": -1,\n";
+        s += "  \"semi-yR\": -1,\n";
+        s += "  \"PD\": false,\n";
+        s += "  \"PD-nii\": false,\n";
+        s += "  \"PD-dcm\": false,\n";
+        s += "  \"PD-3d\": false\n";
+        s += "}\n";
+
+        std::ofstream ofs(path, std::ios::binary | std::ios::trunc);
+        if (!ofs) throw std::runtime_error("无法打开 project.json 进行写入");
+        ofs << s;
+        ofs.flush();
+        if (!ofs) throw std::runtime_error("写入 project.json 失败");
+    }
+
     void persist_locked()
     {
         // 调用者必须持有 mtx 锁

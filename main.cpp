@@ -1,4 +1,4 @@
-// main.cpp - 最小 Crow 服务示例
+// 在include外部模块时需小心，防止重复引入(crow中有引入一些模块)
 
 #include <crow.h>//如果遇到神秘问题可以尝试不要引入全量crow头文件而是只引入需要的
 #include "info_store.h"
@@ -6,6 +6,7 @@
 
 int main()
 {
+    std::cout << "数据库软件运行后请勿手动修改数据库" << std::endl;
     crow::SimpleApp app;
 
     // 初始化数据库（若缺失则创建 db/info.json）
