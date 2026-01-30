@@ -18,11 +18,25 @@ else
   echo "Using local include: ./include (no Homebrew Crow found)"
 fi
 
+# OpenCV flags
+OPENCV_CFLAGS=""
+OPENCV_LIBS=""
+if command -v pkg-config >/dev/null 2>&1; then
+  if pkg-config --exists opencv4; then
+    OPENCV_CFLAGS="$(pkg-config --cflags opencv4)"
+    OPENCV_LIBS="$(pkg-config --libs opencv4)"
+  elif pkg-config --exists opencv; then
+    OPENCV_CFLAGS="$(pkg-config --cflags opencv)"
+    OPENCV_LIBS="$(pkg-config --libs opencv)"
+  fi
+fi
+
 CXX=clang++
-CXXFLAGS="-std=c++17 -stdlib=libc++ -g ${EXTRA_INCLUDES} -I./include"
+CXXFLAGS="-std=c++17 -stdlib=libc++ -g ${EXTRA_INCLUDES} -I./include -I./cnpy ${OPENCV_CFLAGS}"
 
-echo "$CXX $CXXFLAGS main.cpp -o main"
-$CXX $CXXFLAGS main.cpp -o main
+echo "$CXX $CXXFLAGS main.cpp cnpy/cnpy.cpp -o main ${OPENCV_LIBS} -lz"
+$CXX $CXXFLAGS main.cpp cnpy/cnpy.cpp -o main ${OPENCV_LIBS} -lz
 
+echo "哈基米南北绿豆!!!!!!!!"
 echo "Build complete: ./main"
 echo "Run: ./main"

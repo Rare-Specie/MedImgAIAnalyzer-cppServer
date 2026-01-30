@@ -9,12 +9,18 @@
       "cppStandard": "c++17",
       "includePath": [
         "${workspaceFolder}/**",
-        "/opt/homebrew/include"
+        "/opt/homebrew/include",
+        "/opt/homebrew/include/opencv4",
+        "/usr/local/include",
+        "/usr/local/include/opencv4"
       ],
       "browse": {
         "path": [
           "${workspaceFolder}/**",
-          "/opt/homebrew/include"
+          "/opt/homebrew/include",
+          "/opt/homebrew/include/opencv4",
+          "/usr/local/include",
+          "/usr/local/include/opencv4"
         ],
         "limitSymbolsToIncludedHeaders": true
       }

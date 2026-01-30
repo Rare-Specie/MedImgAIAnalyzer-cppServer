@@ -176,6 +176,20 @@ struct InfoStore {
         return it->second;
     }
 
+    std::string read_project_json(const std::string &uuid)
+    {
+        {
+            std::lock_guard<std::mutex> lk(mtx);
+            if (index.find(uuid) == index.end()) throw std::runtime_error("未找到项目");
+        }
+        fs::path path = base_path / uuid / "project.json";
+        std::ifstream ifs(path, std::ios::binary);
+        if (!ifs) throw std::runtime_error("project.json not found");
+        std::string content((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+        if (content.empty()) return std::string("{}");
+        return content;
+    }
+
     Project create(const std::string &name, const std::string &note)
     {
         if (name.empty()) throw std::runtime_error("name 不能为空");

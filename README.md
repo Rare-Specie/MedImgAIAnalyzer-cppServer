@@ -26,6 +26,7 @@ main.cpp 为主程序
 db/
 └─ {project-UUID}/      # 使用UUID管理各个project
    ├─ raw/              # 原始上传
+   │  ├─ temp/          # 临时文件缓存
    │  ├─ pngs/
    │  │  ├─ 1.png
    │  │  ├─ *.png
@@ -59,18 +60,18 @@ db/
    │  │  └─ *-PD.dcm
    │  ├─ nii-PD         # 推理后的npz转换为nii（前端需求时才转换）
    │  ├─ 3d             # 推理后生成的3d模型
-   │  └─ project.json   #存储了当前project的所有状态的json
-   └ info.json          #存储了当前database的所有project的json
+   │  └─ project.json   # 存储了当前project的所有状态的json
+   └ info.json          # 存储了当前database的所有project的json
 ```
 
 ---
 
 ## db.json中保存的数据
 uuid  
-名称  
+名称（前端可更改）  
 创建时间  
 修改时间  
-备注  
+备注（前端可更改）  
 
 
 ## 每个info.json中记录了什么
